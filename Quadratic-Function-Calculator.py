@@ -35,37 +35,37 @@ class equation(QtWidgets.QLineEdit):
         ans = []
         self.select=box.currentText()[:3]
         self.target=box2.currentText()[:3]
-        for i in self.text().split('\n'):
-            AnsListNum=[0]
-            for ai in range(len(i)):
-                try:
-                    int(i[ai])
-                except:
-                    if i[ai]=='(':
-                        if i[AnsListNum[-2]:ai]!=''and i[AnsListNum[-2]:ai]!='y=' :ans+=[i[AnsListNum[-2]:ai]]
-                        if i[ai:i.index(')')+1]!='':ans+=[i[ai:i.index(')')+1]]
-                        ai+=2
-                        AnsListNum+=[i.index(')')]
-                    elif i[ai] in '+-*/' and i[AnsListNum[-1]:ai]!='':
-                        ans+=[i[AnsListNum[-1]:ai]]
-                        AnsListNum+=[ai]
-                    elif i[ai]=='=' and i[AnsListNum[-1]:ai]!='':
-                        AnsListNum+=[ai+1]
-                        ans+=[i[AnsListNum[-2]:ai],'=']
-            ans+=[i[AnsListNum[-1]:]]
-            ans+=['-next\n']
+        a=1
+        if (t:=self.text())[2]not in'+-':
+            t=t[:2]+'+'+t[2:]
+        if t[3]in'x(':
+            t=t[:3]+'1'+t[3:]
+        AnsListNum=[0]
+        for ai in range(len(t)):
+            try:
+                int(t[ai])
+            except:
+                if t[ai]=='(':
+                    if t[AnsListNum[-1]:ai]!=''and t[AnsListNum[-1]:ai]!='y=' :ans+=[t[AnsListNum[-1]:ai]]
+                    if t[ai:t.index(')')+1]!='':ans+=[t[ai:t.index(')')+1]]
+                    AnsListNum+=[t.index(')')]
+                    continue
+                elif t[ai] in '+-*/' and t[AnsListNum[-1]:ai]!='':
+                    ans+=[t[AnsListNum[-1]:ai]]
+                    AnsListNum+=[ai]
+                elif t[ai]=='=' and t[AnsListNum[-1]:ai]!='':
+                    AnsListNum+=[ai+1]
+                    ans+=[t[AnsListNum[-2]:ai],'=']
+        ans+=[t[AnsListNum[-1]:]]
+        ans+=['-next\n']
+        if ans[2][-3:]=='x^2':
+            a=int(ans[2][:-3])
+        else:
+            a=int(ans[2])
         b=0
         c=0
         f=float(ans[3][3:-1]) if ans[3][3:-1]!='' else 1
-        if ans[2][2:] == '-':
-            a=-1
-        elif ans[2][:2]=='y=' and ans[2][2:]!='':
-            a=float(ans[2][2:])
-        else:
-            a=1
-            f=float(ans[2][3:-1]) if ans[2][3:-1]!='' else 1
         if self.select=='一般式':
-            a=int(ans[2][:-3]) if ans[2][:-3]!='' else 1
             b=int(ans[3][:-1]) if ans[2][:-1]!='' else 1
             try:
                 c=int(ans[4]) if ans[4] not in ['','\n'] else 0
@@ -73,11 +73,8 @@ class equation(QtWidgets.QLineEdit):
         elif self.select=='頂點式':
             b=f*2*a
             c=f**2*a
-            if len(ans)>6:
+            if len(ans)==7:
                 c+=float(ans[5])
-            else:
-                if ans[2][:2]!='y=' and len(ans)>5:
-                    c+=float(ans[4])
         else:
             g=0
             if len(ans)>7:
