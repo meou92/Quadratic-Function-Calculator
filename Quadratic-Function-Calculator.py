@@ -7,24 +7,6 @@ def int_all(*arg:float):
         Return += [int(i) if i % 1==0.0 else i]
     return Return
 
-def general_expression(a:float|int,b:float|int,c:float|int):
-    """一般式"""
-    a,b,c,=int_all(a,b,c)
-    return f"y={a}x^2+{b}x+{c}"
-
-def intersection_formula(a:float|int,b:float|int,c:float|int):
-    """交點式"""
-    if (delta:=[d:=b**2-4*a*c, pow(d, 1/2)])[0]>=0:
-        a1,x1,x2,=int_all(a,(0-b+delta[1])/(2*a),(0-b-delta[1])/(2*a))
-        return f"y={a1}(x+{0-x1})(x+{0-x2})"
-    else:
-        return 'error'
-
-def Vertex_type(a:float|int,b:float|int,c:float|int):
-    """頂點式"""
-    a,x1,x2,=int_all(a,b/(2*a),(4*a*c-b**2)/(4*a))
-    return f"y={a}(x+{x1})^2+{x2}"
-
 class equation(QtWidgets.QLineEdit):
     def __init__(self) -> None:
         super().__init__(window)
@@ -84,11 +66,17 @@ class equation(QtWidgets.QLineEdit):
             b=a*(f+g)
             c=a*f*g
         if self.target=='一般式':
-            self.Return=general_expression(a,b,c)
+            a,b,c,=int_all(a,b,c)
+            self.Return=f"y={a}x^2+{b}x+{c}"
         elif self.target=='頂點式':
-            self.Return=Vertex_type(a,b,c)
+            a,x1,x2,=int_all(a,b/(2*a),(4*a*c-b**2)/(4*a))
+            self.Return=f"y={a}(x+{x1})^2+{x2}"
         else:
-            self.Return=intersection_formula(a,b,c)
+            if (delta:=[d:=b**2-4*a*c, pow(d, 1/2)])[0]>=0:
+                a1,x1,x2,=int_all(a,(0-b+delta[1])/(2*a),(0-b-delta[1])/(2*a))
+                self.Return=f"y={a1}(x+{0-x1})(x+{0-x2})"
+            else:
+                self.Return='error'
         m,n,=int_all(0-(b/(2*a)),(4*a*c-b**2)/(4*a))
         self.Return+=f'\n頂點在({m},{n}), '
         self.Return+='開口朝上' if a>0 else '開口朝下'
