@@ -28,10 +28,11 @@ class equation(QtWidgets.QLineEdit):
                 int(t[ai])
             except:
                 if t[ai]=='(':
-                    if t[AnsListNum[-1]:ai]!=''and t[AnsListNum[-1]:ai]!='y=' :ans+=[t[AnsListNum[-1]:ai]]
-                    if t[ai:t.index(')')+1]!='':ans+=[t[ai:t.index(')')+1]]
+                    if t[AnsListNum[-1]:ai]!=''and t[AnsListNum[-1]:ai]!='y=' :
+                        ans+=[t[AnsListNum[-1]:ai]]
+                    if t[ai:t.index(')')+1]!='':
+                        ans+=[t[ai:t.index(')')+1]]
                     AnsListNum+=[t.index(')')]
-                    continue
                 elif t[ai] in '+-*/' and t[AnsListNum[-1]:ai]!='':
                     ans+=[t[AnsListNum[-1]:ai]]
                     AnsListNum+=[ai]
