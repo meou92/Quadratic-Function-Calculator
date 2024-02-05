@@ -7,7 +7,7 @@ def int_all(*arg:float):
         Return += [int(i) if i % 1==0.0 else i]
     return Return
 
-class equation(QtWidgets.QLineEdit):
+class Equation(QtWidgets.QLineEdit):
     def __init__(self) -> None:
         super().__init__(window)
         self.select=''
@@ -28,10 +28,8 @@ class equation(QtWidgets.QLineEdit):
                 int(t[ai])
             except:
                 if t[ai]=='(':
-                    if t[AnsListNum[-1]:ai]!=''and t[AnsListNum[-1]:ai]!='y=' :
-                        ans+=[t[AnsListNum[-1]:ai]]
-                    if t[ai:t.index(')')+1]!='':
-                        ans+=[t[ai:t.index(')')+1]]
+                    if t[AnsListNum[-1]:ai]!=''and t[AnsListNum[-1]:ai]!='y=' :ans+=[t[AnsListNum[-1]:ai]]
+                    if t[ai:t.index(')')+1]!='':ans+=[t[ai:t.index(')')+1]]
                     AnsListNum+=[t.index(')')]
                 elif t[ai] in '+-*/' and t[AnsListNum[-1]:ai]!='':
                     ans+=[t[AnsListNum[-1]:ai]]
@@ -97,19 +95,19 @@ l0 = QtWidgets.QLabel(window)
 l0.setGeometry(20, 20, 300, 40)
 l0.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 l0.setStyleSheet('background:#5379FF;color:#FFAEC9;border: 3px solid #FFAEC9;text-align:center;')
-l0.setText("Input")
+l0.setText("輸入")
 l1 = QtWidgets.QLabel(window)
-l1.setText("Output")
+l1.setText("輸出")
 l1.setStyleSheet('background:#5379FF;color:#FFAEC9;border: 3px solid #FFAEC9;text-align:center;')
 l1.setGeometry(340, 20, 300, 40)
 l1.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-input0 = equation()
+input0 = Equation()
 input0.setGeometry(20, 70, 300, 40)
 box = QtWidgets.QComboBox(window)
-box.addItems(['一般式 y=ax^2+bx+c','頂點式 y=a(x+b/2a)^2+(4ac-b^2)/4a','交点式 y=a(x-a)(x-b)'])
+box.addItems(['一般式 y=ax^2+bx+c','頂點式 y=a(x+b/2a)^2+(4ac-b^2)/4a','交點式 y=a(x-a)(x-b)'])
 box.setGeometry(20, 120, 300, 20)
 box2 = QtWidgets.QComboBox(window)
-box2.addItems(['一般式 y=ax^2+bx+c','頂點式 y=a(x+b/2a)^2+(4ac-b^2)/4a','交点式 y=a(x-a)(x-b)'])
+box2.addItems(['一般式 y=ax^2+bx+c','頂點式 y=a(x+b/2a)^2+(4ac-b^2)/4a','交點式 y=a(x-a)(x-b)'])
 box2.setGeometry(20, 150, 300, 20)
 btn = QtWidgets.QPushButton(window)
 btn.setText('確認')
