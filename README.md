@@ -1,2 +1,1 @@
-# Quadratic-Function-Calculator
-##二次函數計算器
+# Quadratic-Function-Calculator 二次函數計算器
