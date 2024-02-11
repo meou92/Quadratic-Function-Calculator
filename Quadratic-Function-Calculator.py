@@ -8,15 +8,10 @@ def int_all(*arg:float):
     return Return
 
 class Equation(QtWidgets.QLineEdit):
-    def __init__(self) -> None:
-        super().__init__(window)
-        self.select=''
-        self.target=''
-        self.Return=''
     def check(self):
         ans = []
-        self.select=box.currentText()[:3]
-        self.target=box2.currentText()[:3]
+        select=box.currentText()[:3]
+        target=box2.currentText()[:3]
         a=1
         if (t:=self.text())[2]not in'+-':
             t=t[:2]+'+'+t[2:]
@@ -46,12 +41,12 @@ class Equation(QtWidgets.QLineEdit):
         b=0
         c=0
         f=float(ans[3][3:-1]) if ans[3][3:-1]!='' else 1
-        if self.select=='一般式':
+        if select=='一般式':
             b=int(ans[3][:-1]) if ans[2][:-1]!='' else 1
             try:
                 c=int(ans[4]) if ans[4] not in ['','\n'] else 0
             except:...
-        elif self.select=='頂點式':
+        elif select=='頂點式':
             b=f*2*a
             c=f**2*a
             if len(ans)==7:
@@ -64,23 +59,23 @@ class Equation(QtWidgets.QLineEdit):
                 g=float(ans[5][:-1]) if ans[5][:-1]!='' else 0
             b=a*(f+g)
             c=a*f*g
-        if self.target=='一般式':
+        if target=='一般式':
             a,b,c,=int_all(a,b,c)
-            self.Return=f"y={a}x^2+{b}x+{c}"
-        elif self.target=='頂點式':
+            Return=f"y={a}x^2+{b}x+{c}"
+        elif target=='頂點式':
             a,x1,x2,=int_all(a,b/(2*a),(4*a*c-b**2)/(4*a))
-            self.Return=f"y={a}(x+{x1})^2+{x2}"
+            Return=f"y={a}(x+{x1})^2+{x2}"
         else:
             if (delta:=[d:=b**2-4*a*c, pow(d, 1/2)])[0]>=0:
                 a1,x1,x2,=int_all(a,(0-b+delta[1])/(2*a),(0-b-delta[1])/(2*a))
-                self.Return=f"y={a1}(x+{0-x1})(x+{0-x2})"
+                Return=f"y={a1}(x+{0-x1})(x+{0-x2})"
             else:
-                self.Return='error'
+                Return='error'
         m,n,=int_all(0-(b/(2*a)),(4*a*c-b**2)/(4*a))
-        self.Return+=f'\n頂點在({m},{n}), '
-        self.Return+='開口朝上' if a>0 else '開口朝下'
+        Return+=f'\n頂點在({m},{n}), '
+        Return+='開口朝上' if a>0 else '開口朝下'
         input1.setPlainText('')
-        input1.insertPlainText(self.Return)
+        input1.insertPlainText(Return)
 
 app = QtWidgets.QApplication(sys.argv)
 window = QtWidgets.QWidget()
@@ -101,7 +96,7 @@ l1.setText("輸出")
 l1.setStyleSheet('background:#5379FF;color:#FFAEC9;border: 3px solid #FFAEC9;text-align:center;')
 l1.setGeometry(340, 20, 300, 40)
 l1.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-input0 = Equation()
+input0 = Equation(window)
 input0.setGeometry(20, 70, 300, 40)
 box = QtWidgets.QComboBox(window)
 box.addItems(['一般式 y=ax^2+bx+c','頂點式 y=a(x+b/2a)^2+(4ac-b^2)/4a','交點式 y=a(x-a)(x-b)'])
