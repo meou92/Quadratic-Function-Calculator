@@ -40,9 +40,7 @@ def calculator():
                 ("x^2" in func and "x" in func[func.index("x^2") + 3 :])
                 or (")^2" in func)
                 or (
-                    func.count("x") == 2
-                    and func.count("(") == 2
-                    and func.count(")") == 2
+                    func.count("x") == func.count("(") == func.count(")") == 2
                 )
             )
     ):
