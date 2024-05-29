@@ -157,7 +157,7 @@ class MoveLabel(QtWidgets.QLabel):
         elif self.shape==2:
             painter.fillRect(0, 0, self.side_width, self.side_width, c)
         elif self.shape==3:
-            p1 = QtCore.QPointF(self.width() / 2, (self.height() - self.side_width * 0.866) / 2)  # 0.866 为 sqrt(3)/2，即等边三角形的高度
+            p1 = QtCore.QPointF(self.width() / 2, (self.height() - self.side_width * 0.866) / 2)
             p2 = QtCore.QPointF((self.width() - self.side_width) / 2, (self.height() + self.side_width * 0.866) / 2)
             p3 = QtCore.QPointF((self.width() + self.side_width) / 2, (self.height() + self.side_width * 0.866) / 2)
             painter.setBrush(QtGui.QBrush(c))
