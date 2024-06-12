@@ -108,13 +108,21 @@ def calculator():
                 texts += f"\n當y={get}時, x={get1-m}or{-get1-m}"
         output1.setPlainText(texts)
 
+class Vector():
+    def __init__(self,x,y,x2,y2,lenx,leny):
+        self.num=0
+        self.rect_list=[[x,y], [x2,y2],[lenx-x,leny-y], [lenx-x2,leny-y2]]
+    def get_list(self):
+        self.num = (self.num+1)%4
+        return self.rect_list[self.num],self.rect_list[(self.num+1)%4]
+
 class MoveLabel(QtWidgets.QLabel):
     def __init__(self):
         super().__init__(label)
         width=min(label.width(),label.height())//2
         self.setGeometry(0,0,width,width)
         self.setStyleSheet("background-color: transparent;")
-        self.side_width=width
+        self.width=width
         self.shape=randint(1,3)
         self.color=[255,255,255,25*(len(items)%7+1)]
         match randint(1,4):
@@ -135,17 +143,20 @@ class MoveLabel(QtWidgets.QLabel):
         if randint(1,2)==1:
             self.animation1.setStartValue(QtCore.QRectF(*t0,width, width))
             self.animation1.setEndValue(QtCore.QRectF(*t1,width, width))
+            self.vector = Vector(*t0,*t1)
         else:
             self.animation1.setStartValue(QtCore.QRectF(*t1,width, width))
             self.animation1.setEndValue(QtCore.QRectF(*t0,width, width))
+            self.vector = Vector(*t1,*t0)
         self.animation1.setDuration(randint(1,9)*500)
         self.animation1.setEasingCurve(QtCore.QEasingCurve.Type.InOutQuad)
         self.animation1.start()
         self.show()
     def toggleAnimation(self):
-        a=self.animation1.startValue()
-        self.animation1.setStartValue(self.animation1.endValue())
-        self.animation1.setEndValue(a)
+        a,b,=self.vector.get_list()
+        width = self.width
+        self.animation1.setStartValue(QtCore.QRectF(*a,width, width))
+        self.animation1.setEndValue(QtCore.QRectF(*b,width, width))
         self.animation1.start()
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
@@ -155,11 +166,11 @@ class MoveLabel(QtWidgets.QLabel):
             painter.setBrush(QtGui.QBrush(c))
             painter.drawEllipse(self.rect().adjusted(1, 1, -1, -1))
         elif self.shape==2:
-            painter.fillRect(0, 0, self.side_width, self.side_width, c)
+            painter.fillRect(0, 0, self.width, self.width, c)
         elif self.shape==3:
-            p1 = QtCore.QPointF(self.width() / 2, (self.height() - self.side_width * 0.866) / 2)
-            p2 = QtCore.QPointF((self.width() - self.side_width) / 2, (self.height() + self.side_width * 0.866) / 2)
-            p3 = QtCore.QPointF((self.width() + self.side_width) / 2, (self.height() + self.side_width * 0.866) / 2)
+            p1 = QtCore.QPointF(self.width() / 2, (self.height() - self.width * 0.866) / 2)
+            p2 = QtCore.QPointF((self.width() - self.width) / 2, (self.height() + self.width * 0.866) / 2)
+            p3 = QtCore.QPointF((self.width() + self.width) / 2, (self.height() + self.width * 0.866) / 2)
             painter.setBrush(QtGui.QBrush(c))
             painter.drawPolygon(QtGui.QPolygonF([p1, p2, p3]))
 
