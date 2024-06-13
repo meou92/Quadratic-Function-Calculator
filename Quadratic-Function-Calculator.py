@@ -33,7 +33,7 @@ def stript(text:str):
 def calculator():
     func=input0.text()
     if (
-        (inputed := box.currentText()) in li
+        (input_text := box.currentText()) in li
             and (output := box2.currentText()) in li
             and func[:2] == "y="
             and (
@@ -51,10 +51,10 @@ def calculator():
         ans=stript(t)
         a=float(ans[2][:-3]) if ans[2][-3:]=='x^2' else float(ans[2])
         f=float(ans[4]) if ans[4]!='' else 1
-        if inputed=='一般式':
+        if input_text=='一般式':
             b=float(ans[3][:-1]) if ans[2][:-1]!='' else 1
             c=float(ans[4]) if len(ans)>4 else 0
-        elif inputed=='頂點式':
+        elif input_text=='頂點式':
             b=f*2*a
             c=f**2*a
             if len(ans)==7:
@@ -65,7 +65,7 @@ def calculator():
             c=a*f*g
         x1=b/(2*a)
         x2=c-(b**2)/(4*a)
-        if inputed=="頂點式":
+        if input_text=="頂點式":
             vertex=func
         else:
             te=f"(x{pos(x1)})^2"
@@ -90,13 +90,13 @@ def calculator():
                 if get % 1 == 0:
                     get = int(get)
                 text = t[2:]
-                if inputed == "一般式":
+                if input_text == "一般式":
                     text = text.replace("x", "*x")
                 text = text.replace("^2", "**2")
                 text = text.replace("(", "*(")
                 texts += f"\n當x={get}時, y={eval(text,{'x':get})}"
             elif parameter.currentText() == "y":
-                if inputed == "頂點式":
+                if input_text == "頂點式":
                     list_vertex = ans
                 else:
                     list_vertex = stript(vertex)
@@ -109,9 +109,14 @@ def calculator():
         output1.setPlainText(texts)
 
 class Vector():
-    def __init__(self,x,y,x2,y2,lenx,leny):
+    def __init__(self,x,y,x2,y2,len_x,len_y, width):
         self.num=0
-        self.rect_list=[[x,y], [x2,y2],[lenx-x,leny-y], [lenx-x2,leny-y2]]
+        self.rect_list = [
+            [x, y],
+            [x2, y2],
+            [len_x - x - width, len_y - y - width],
+            [len_x - x2 - width, len_y - y2 - width],
+        ]
     def get_list(self):
         self.num = (self.num+1)%4
         return self.rect_list[self.num],self.rect_list[(self.num+1)%4]
@@ -122,13 +127,13 @@ class MoveLabel(QtWidgets.QLabel):
         width=min(label.width(),label.height())//2
         self.setGeometry(0,0,width,width)
         self.setStyleSheet("background-color: transparent;")
-        self.width=width
+        self.label_width=width
         self.shape=randint(1,3)
-        self.color=[255,255,255,25*(len(items)%7+1)]
+        self.color=[255,255,255,20*(len(items)%7+1)]
         match randint(1,4):
             case 1:
-                t0=(0, 0)
-                t1=(label.width() - width, label.height() - width)
+                t0 = (0, 0)
+                t1 = (label.width() - width, label.height() - width)
             case 2:
                 t0=((label.width()-width)//2,0)
                 t1=((label.width()-width)//2,label.height()-width)
@@ -143,20 +148,19 @@ class MoveLabel(QtWidgets.QLabel):
         if randint(1,2)==1:
             self.animation1.setStartValue(QtCore.QRectF(*t0,width, width))
             self.animation1.setEndValue(QtCore.QRectF(*t1,width, width))
-            self.vector = Vector(*t0,*t1)
+            self.vector = Vector(*t0,*t1,label.width(),label.height(),width)
         else:
             self.animation1.setStartValue(QtCore.QRectF(*t1,width, width))
             self.animation1.setEndValue(QtCore.QRectF(*t0,width, width))
-            self.vector = Vector(*t1,*t0)
-        self.animation1.setDuration(randint(1,9)*500)
+            self.vector = Vector(*t1, *t0, label.width(), label.height(),width)
+        self.animation1.setDuration(randint(1,9)*300)
         self.animation1.setEasingCurve(QtCore.QEasingCurve.Type.InOutQuad)
         self.animation1.start()
         self.show()
     def toggleAnimation(self):
         a,b,=self.vector.get_list()
-        width = self.width
-        self.animation1.setStartValue(QtCore.QRectF(*a,width, width))
-        self.animation1.setEndValue(QtCore.QRectF(*b,width, width))
+        self.animation1.setStartValue(QtCore.QRectF(*a,self.label_width, self.label_width))
+        self.animation1.setEndValue(QtCore.QRectF(*b,self.label_width, self.label_width))
         self.animation1.start()
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
@@ -166,20 +170,33 @@ class MoveLabel(QtWidgets.QLabel):
             painter.setBrush(QtGui.QBrush(c))
             painter.drawEllipse(self.rect().adjusted(1, 1, -1, -1))
         elif self.shape==2:
-            painter.fillRect(0, 0, self.width, self.width, c)
+            painter.fillRect(0, 0, self.label_width, self.label_width, c)
         elif self.shape==3:
-            p1 = QtCore.QPointF(self.width() / 2, (self.height() - self.width * 0.866) / 2)
-            p2 = QtCore.QPointF((self.width() - self.width) / 2, (self.height() + self.width * 0.866) / 2)
-            p3 = QtCore.QPointF((self.width() + self.width) / 2, (self.height() + self.width * 0.866) / 2)
+            p1 = QtCore.QPointF(self.width() / 2, (self.height() - self.label_width * 0.866) / 2)
+            p2 = QtCore.QPointF((self.width() - self.label_width) / 2, (self.height() + self.label_width * 0.866) / 2)
+            p3 = QtCore.QPointF((self.width() + self.label_width) / 2, (self.height() + self.label_width * 0.866) / 2)
             painter.setBrush(QtGui.QBrush(c))
             painter.drawPolygon(QtGui.QPolygonF([p1, p2, p3]))
 
 def change_color():
-    if (inputed:=box.currentText()) in li and (output:=box2.currentText()) in li and inputed!=output:
-        key=f"{li.index(inputed)+1}x{li.index(output)+1}"
+    if (input_text:=box.currentText()) in li and (output:=box2.currentText()) in li and input_text!=output:
+        key=f"{li.index(input_text)+1}x{li.index(output)+1}"
         label.setStyleSheet(f"background:{bgcolor[key]};")
         label1.setStyleSheet(f"color:{bgcolor[key]};background:rgba(255,255,255,0.5);")
         output1.setStyleSheet(f"border:1px solid #fff;background:transparent;color:{bgcolor[key]};")
+        btn.setStyleSheet(f"""
+            QPushButton {{
+                background:{bgcolor[key]};
+                color:#ffffff;
+                border-radius: 7px;
+                border: 1px groove #222222;
+                border-style: outset;
+            }}
+            QPushButton:hover {{
+                background:{bgcolor[key]}50;
+                border: 2px groove #22222234;
+            }}
+        """)
 
 app=QtWidgets.QApplication(sys.argv)
 main_window=QtWidgets.QMainWindow()
@@ -196,7 +213,7 @@ items = []
 for item in range(14):
     items+=[MoveLabel()]
 blur_effect = QtWidgets.QGraphicsBlurEffect()
-blur_effect.setBlurRadius(90)
+blur_effect.setBlurRadius(60)
 label.setGraphicsEffect(blur_effect)
 main_window.setCentralWidget(central_widget)
 window = QtWidgets.QWidget(main_window)
@@ -212,7 +229,9 @@ op1.setOpacity(0.6)
 op2 = QtWidgets.QGraphicsOpacityEffect()
 op2.setOpacity(0.6)
 op3 = QtWidgets.QGraphicsOpacityEffect()
-op3.setOpacity(0.5)
+op3.setOpacity(0.6)
+op4 = QtWidgets.QGraphicsOpacityEffect()
+op4.setOpacity(0.6)
 label0 = QtWidgets.QLabel("請輸入二次函數：",window)
 label0.setGeometry(0,0,100,20)
 input0 = QtWidgets.QLineEdit(window)
@@ -235,10 +254,23 @@ parameter.setGraphicsEffect(op3)
 parameter.setGeometry(0,130,300, 30)
 input1 = QtWidgets.QLineEdit(window)
 input1.setGeometry(0,165,300, 30)
+input1.setGraphicsEffect(op4)
 btn = QtWidgets.QPushButton(window)
 btn.setText('確認')
 btn.setGeometry(0,195,50, 30)
-btn.setStyleSheet("background:#5379FF; color:#FFAEC9; border-radius: 10px; border: 2px groove gray;border-style: outset;")
+btn.setStyleSheet(f"""
+    QPushButton {{
+        background:{bgcolor['1x2']};
+        color:#ffffff;
+        border-radius: 7px;
+        border: 1px groove #222222;
+        border-style: outset;
+    }}
+    QPushButton:hover {{
+        background:{bgcolor['1x2']}50;
+        border: 2px groove #22222234;
+    }}
+""")
 btn.clicked.connect(calculator)
 label1 = QtWidgets.QLabel("一般式 y=ax^2+bx+c\n頂點式 y=a(x+b/2a)^2+(4ac-b^2)/4a\n交點式 y=a(x-a)(x-b)\n\n就算該項係數為零也要寫\n不然它只會把輸入的二次函數\n原封不動的傳回來",window)
 label1.setStyleSheet("color:#7b040d;background:rgba(255,255,255,0.5);")
